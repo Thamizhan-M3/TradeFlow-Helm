@@ -204,7 +204,7 @@ mongodb:
   image:
     registry: docker.io
     repository: bitnami/mongodb
-    tag: "7.0.14-debian-12-r0"
+    tag: "sha256-9b0eef816acdb96b9d82dd1729ca33e811c7f914de18b08bb8fda81284e440a6"
     pullPolicy: IfNotPresent
   persistence:
     enabled: true

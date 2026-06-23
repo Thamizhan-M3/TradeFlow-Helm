@@ -1,0 +1,21 @@
+{{- if .Values.nginxGateway.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-gateway
+  labels:
+    app.kubernetes.io/name: nginx-gateway
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/component: gateway
+spec:
+  type: {{ .Values.nginxGateway.service.type }}
+  ports:
+    - port: {{ .Values.nginxGateway.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app.kubernetes.io/name: nginx-gateway
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/component: gateway
+{{- end }}

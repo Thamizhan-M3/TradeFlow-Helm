@@ -21,6 +21,16 @@ common:
 haproxy:
   enabled: false
 
+nginxGateway:
+  enabled: true
+  image:
+    repository: nginx
+    tag: stable-alpine
+    pullPolicy: IfNotPresent
+  service:
+    type: LoadBalancer
+    port: 80
+
 frontend:
   enabled: true
   replicaCount: 1
@@ -33,7 +43,7 @@ frontend:
     tag: "v0.0.3"
     pullPolicy: IfNotPresent
   service:
-    type: LoadBalancer
+    type: ClusterIP
     port: 80
   routePath: /
   env:

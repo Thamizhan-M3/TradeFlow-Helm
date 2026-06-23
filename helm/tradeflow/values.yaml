@@ -102,6 +102,16 @@ gateway:
 haproxy:
   enabled: true
 
+nginxGateway:
+  enabled: false
+  image:
+    repository: nginx
+    tag: stable-alpine
+    pullPolicy: IfNotPresent
+  service:
+    type: LoadBalancer
+    port: 80
+
 # ──────────────────────────────────────────────────────────────
 # COMMON CHART VALUES
 # Gateway is deployed via the common sub-chart.

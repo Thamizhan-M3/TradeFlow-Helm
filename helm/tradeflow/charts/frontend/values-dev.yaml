@@ -1,0 +1,27 @@
+replicaCount: 2
+image:
+  repository: thamizhanm3/tradeflow-frontend
+  tag: "v0.0.3"
+  pullPolicy: IfNotPresent
+resources:
+  limits:
+    cpu: "200m"
+    memory: "256Mi"
+  requests:
+    cpu: "50m"
+    memory: "64Mi"
+service:
+  type: ClusterIP
+env:
+  PORT: "80"
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 4
+  targetCPUUtilizationPercentage: 80
+env:
+  PORT: "80"
+  VITE_USERS_API: "/api/users"
+  VITE_STOCKS_API: "/api/stocks"
+  VITE_TRADES_API: "/api/trades"
+  VITE_PORTFOLIO_API: "/api/portfolio"

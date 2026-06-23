@@ -1,0 +1,18 @@
+{{- if .Values.rollout.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "portfolio.fullname" . }}-preview
+  labels:
+    {{- include "portfolio.selectorLabels" . | nindent 4 }}
+    role: preview
+spec:
+  type: ClusterIP
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: {{ .Values.env.PORT }}
+      protocol: TCP
+      name: http
+  selector:
+    {{- include "portfolio.selectorLabels" . | nindent 4 }}
+{{- end }}

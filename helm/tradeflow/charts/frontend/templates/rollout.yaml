@@ -1,0 +1,60 @@
+{{- if .Values.rollout.enabled }}
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: {{ include "frontend.fullname" . }}
+  labels:
+    {{- include "frontend.selectorLabels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "frontend.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "frontend.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.env.PORT }}
+              protocol: TCP
+          envFrom:
+            - configMapRef:
+                name: {{ include "frontend.fullname" . }}-config
+          livenessProbe:
+            httpGet:
+              path: {{ .Values.probes.path }}
+              port: {{ .Values.env.PORT }}
+            initialDelaySeconds: {{ .Values.probes.initialDelaySeconds | default 10 }}
+            periodSeconds: {{ .Values.probes.periodSeconds }}
+            timeoutSeconds: {{ .Values.probes.timeoutSeconds | default 5 }}
+            failureThreshold: {{ .Values.probes.failureThreshold }}
+          readinessProbe:
+            httpGet:
+              path: {{ .Values.probes.path }}
+              port: {{ .Values.env.PORT }}
+            initialDelaySeconds: {{ .Values.probes.initialDelaySeconds | default 10 }}
+            periodSeconds: {{ .Values.probes.periodSeconds }}
+            timeoutSeconds: {{ .Values.probes.timeoutSeconds | default 5 }}
+            failureThreshold: {{ .Values.probes.failureThreshold }}
+          startupProbe:
+            httpGet:
+              path: {{ .Values.probes.path }}
+              port: {{ .Values.env.PORT }}
+            failureThreshold: {{ .Values.probes.failureThreshold }}
+            periodSeconds: {{ .Values.probes.periodSeconds }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+  strategy:
+    blueGreen:
+      activeService: {{ include "frontend.fullname" . }}
+      previewService: {{ include "frontend.fullname" . }}-preview
+      autoPromotionEnabled: false
+      scaleDownDelaySeconds: 60
+      abortScaleDownDelaySeconds: 30
+{{- end }}

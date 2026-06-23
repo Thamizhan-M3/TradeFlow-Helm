@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: tradeflow-dev
+  labels:
+    environment: dev
+    app: tradeflow
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: tradeflow-prod
+  labels:
+    environment: prod
+    app: tradeflow
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: gateway
+  labels:
+    environment: 
+      - dev
+      - prod
+    app: tradeflow

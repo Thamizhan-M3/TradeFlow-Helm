@@ -1,0 +1,15 @@
+# ==============================================================
+# Argo Rollouts — Namespace + Controller Install
+# Apply: kubectl apply -f argocd/rollouts/install.yaml
+# ==============================================================
+
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: argo-rollouts
+---
+# Install the Argo Rollouts controller + CRDs
+# Source: https://github.com/argoproj/argo-rollouts/releases/latest
+# Run separately if you prefer the official manifest:
+#   kubectl apply -n argo-rollouts -f \
+#   https://github.com/argoproj/argo-rollouts/releases/latest/download/install.yaml

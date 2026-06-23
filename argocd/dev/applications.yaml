@@ -1,0 +1,257 @@
+# ==============================================================
+# ArgoCD Application Manifests — Tradeflow (dev Namespace)
+# Deploy: kubectl apply -f argocd/dev/
+# ==============================================================
+
+# ── USER SERVICE ──────────────────────────────────────────────
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: tradeflow-user-dev
+  namespace: argocd
+  labels:
+    app.kubernetes.io/part-of: tradeflow
+    environment: dev
+
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/Thamizhan-M3/Tradeflow-Kubernetes-Manifests.git
+    targetRevision: HEAD
+    path: helm/tradeflow/charts/user
+    helm:
+      releaseName: tradeflow-dev-user
+      valueFiles:
+        - values.yaml
+        - values-dev.yaml
+        - ../../values.yaml
+        - ../../values-dev.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: tradeflow-dev
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+---
+
+# ── STOCK SERVICE ─────────────────────────────────────────────
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: tradeflow-stock-dev
+  namespace: argocd
+  labels:
+    app.kubernetes.io/part-of: tradeflow
+    environment: dev
+
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/Thamizhan-M3/Tradeflow-Kubernetes-Manifests.git
+    targetRevision: HEAD
+    path: helm/tradeflow/charts/stock
+    helm:
+      releaseName: tradeflow-dev-stock
+      valueFiles:
+        - values.yaml
+        - values-dev.yaml
+        - ../../values.yaml
+        - ../../values-dev.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: tradeflow-dev
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+---
+
+# ── TRADING SERVICE ───────────────────────────────────────────
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: tradeflow-trading-dev
+  namespace: argocd
+  labels:
+    app.kubernetes.io/part-of: tradeflow
+    environment: dev
+
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/Thamizhan-M3/Tradeflow-Kubernetes-Manifests.git
+    targetRevision: HEAD
+    path: helm/tradeflow/charts/trading
+    helm:
+      releaseName: tradeflow-dev-trading
+      valueFiles:
+        - values.yaml
+        - values-dev.yaml
+        - ../../values.yaml
+        - ../../values-dev.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: tradeflow-dev
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+---
+
+# ── PORTFOLIO SERVICE ─────────────────────────────────────────
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: tradeflow-portfolio-dev
+  namespace: argocd
+  labels:
+    app.kubernetes.io/part-of: tradeflow
+    environment: dev
+
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/Thamizhan-M3/Tradeflow-Kubernetes-Manifests.git
+    targetRevision: HEAD
+    path: helm/tradeflow/charts/portfolio
+    helm:
+      releaseName: tradeflow-dev-portfolio
+      valueFiles:
+        - values.yaml
+        - values-dev.yaml
+        - ../../values.yaml
+        - ../../values-dev.yaml
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: tradeflow-dev
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+---
+
+# ── FRONTEND ──────────────────────────────────────────────────
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: tradeflow-frontend-dev
+  namespace: argocd
+  labels:
+    app.kubernetes.io/part-of: tradeflow
+    environment: dev
+
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/Thamizhan-M3/Tradeflow-Kubernetes-Manifests.git
+    targetRevision: HEAD
+    path: helm/tradeflow/charts/frontend
+    helm:
+      releaseName: tradeflow-dev-frontend
+      valueFiles:
+        - values.yaml
+        - values-dev.yaml
+        - ../../values.yaml
+        - ../../values-dev.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: tradeflow-dev
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+---
+
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: tradeflow-mongodb-dev
+  namespace: argocd
+  labels:
+    app.kubernetes.io/part-of: tradeflow
+    environment: dev
+
+spec:
+  project: default
+  source:
+    repoURL: https://charts.bitnami.com/bitnami
+    chart: mongodb
+    targetRevision: 14.0.0
+    helm:
+      releaseName: tradeflow-dev-mongodb
+      values: |
+        architecture: replicaset
+        replicaCount: 3
+        replicaSetName: rs0
+        image:
+          registry: docker.io
+          repository: bitnami/mongodb
+          tag: latest
+          pullPolicy: IfNotPresent
+        auth:
+          enabled: false
+        persistence:
+          enabled: true
+          storageClass: nfs-storage
+          size: 2Gi
+        resources:
+          limits:
+            cpu: "500m"
+            memory: "1Gi"
+          requests:
+            cpu: "250m"
+            memory: "512Mi"
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: tradeflow-dev
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: tradeflow-dev-gateway
+  namespace: argocd
+  labels:
+    app.kubernetes.io/part-of: tradeflow
+    environment: dev
+
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/Thamizhan-M3/Tradeflow-Kubernetes-Manifests.git
+    targetRevision: HEAD
+    path: helm/tradeflow/charts/common
+    helm:
+      releaseName: tradeflow-dev-gateway
+      values: |
+        gateway:
+          enabled: true
+          className: kgateway
+        global:
+          environment: dev
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: tradeflow-dev
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

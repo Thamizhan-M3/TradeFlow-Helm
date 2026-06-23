@@ -1,0 +1,75 @@
+# This file uses Kyverno, a declarative policy engine and admission controller for Kubernetes,
+# to enforce the required security policies without needing a custom webhook server.
+# Ensure Kyverno is installed in the cluster: `helm install kyverno kyverno/kyverno -n kyverno --create-namespace`
+
+# Corrected Kyverno ClusterPolicy for TradeFlow
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: tradeflow-security-policies
+spec:
+  validationFailureAction: Enforce
+  background: true
+  rules:
+    - name: disallow-latest-tag
+      match:
+        any:
+        - resources:
+            kinds:
+              - Pod
+      exclude:
+        any:
+        - resources:
+            namespaces:
+              - tradeflow-dev
+              - tradeflow-prod
+            selector:
+              matchLabels:
+                app.kubernetes.io/name: mongodb
+      validate:
+        message: "Using 'latest' image tag is not allowed."
+        pattern:
+          spec:
+            containers:
+              - image: "!*:latest"
+
+    - name: require-resource-limits
+      match:
+        any:
+        - resources:
+            kinds:
+              - Pod
+      exclude:
+        any:
+        - resources:
+            namespaces:
+              - kgateway-system  # Added exclusion for gateway components
+      validate:
+        message: "CPU and memory resource limits are required."
+        pattern:
+          spec:
+            containers:
+              - resources:
+                  limits:
+                    memory: "?*"
+                    cpu: "?*"
+
+    - name: disallow-privileged-containers
+      match:
+        any:
+        - resources:
+            kinds:
+              - Pod
+      exclude:
+        any:
+        - resources:
+            namespaces:
+              - kube-system
+              - kgateway-system # Added exclusion to allow network binding
+      validate:
+        message: "Privileged containers are not allowed."
+        pattern:
+          spec:
+            containers:
+              - =(securityContext):
+                  =(privileged): "false"

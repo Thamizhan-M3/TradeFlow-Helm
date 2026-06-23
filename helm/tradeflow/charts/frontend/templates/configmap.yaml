@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "frontend.fullname" . }}-config
+  labels:
+    {{- include "frontend.selectorLabels" . | nindent 4 }}
+data:
+  VITE_USERS_API: {{ .Values.env.VITE_USERS_API | quote }}
+  VITE_STOCKS_API: {{ .Values.env.VITE_STOCKS_API | quote }}
+  VITE_TRADES_API: {{ .Values.env.VITE_TRADES_API | quote }}
+  VITE_PORTFOLIO_API: {{ .Values.env.VITE_PORTFOLIO_API | quote }}

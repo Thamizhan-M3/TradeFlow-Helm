@@ -1,0 +1,55 @@
+# ==============================================================
+# ArgoCD ignoreDifferences patch for Rollout-managed fields
+# The Argo Rollouts controller modifies spec.replicas at runtime.
+# Without this, ArgoCD will continuously try to revert those changes.
+#
+# Add the ignoreDifferences block to EACH per-service Application
+# in argocd/dev/applications.yaml and argocd/prod/applications.yaml
+# ==============================================================
+
+# Example: paste this block inside any service Application spec:
+#
+#  ignoreDifferences:
+#    - group: argoproj.io
+#      kind: Rollout
+#      jsonPointers:
+#        - /spec/replicas
+#        - /spec/template/metadata/annotations
+
+# Full example Application with ignoreDifferences:
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: tradeflow-user-dev          # change per service/env
+  namespace: argocd
+  labels:
+    app.kubernetes.io/part-of: tradeflow
+    environment: dev
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/Thamizhan-M3/Tradeflow-Kubernetes-Manifests.git
+    targetRevision: HEAD
+    path: helm/tradeflow/charts/user   # change per service
+    helm:
+      releaseName: tradeflow-dev-user  # change per service/env
+      values: |
+        # ... your existing values ...
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: tradeflow-dev           # change per env
+  ignoreDifferences:
+    - group: argoproj.io
+      kind: Rollout
+      jsonPointers:
+        - /spec/replicas
+        - /spec/template/metadata/annotations
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - RespectIgnoreDifferences=true  # required for ignoreDifferences to work

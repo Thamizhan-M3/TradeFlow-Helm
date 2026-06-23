@@ -1,0 +1,21 @@
+
+replicaCount: 2
+image:
+  repository: thamizhanm3/tradeflow-trading
+  tag: "v0.0.1"
+  pullPolicy: IfNotPresent
+resources:
+  limits:
+    cpu: "200m"
+    memory: "256Mi"
+  requests:
+    cpu: "50m"
+    memory: "64Mi"
+autoscaling:
+  enabled: true
+  minReplicas: 3
+  maxReplicas: 6
+  targetCPUUtilizationPercentage: 80
+env:
+  MONGODB_URI: "mongodb://tradeflow-prod-mongodb-0.tradeflow-prod-mongodb-headless:27017,tradeflow-prod-mongodb-1.tradeflow-prod-mongodb-headless:27017,tradeflow-prod-mongodb-2.tradeflow-prod-mongodb-headless:27017/trading_db_prod?replicaSet=rs0"
+  PORT: "4003"

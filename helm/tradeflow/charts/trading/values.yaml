@@ -1,0 +1,20 @@
+
+enabled: true
+rollout:
+  enabled: false
+routing:
+  enabled: false
+routePath: /api/trades
+probes:
+  path: /health
+  initialDelaySeconds: 60
+  periodSeconds: 10
+  timeoutSeconds: 5
+  failureThreshold: 6
+service:
+  type: ClusterIP
+  port: 4003
+autoscaling:
+  enabled: false
+env:
+  PORT: "4003"

@@ -1,0 +1,24 @@
+
+enabled: true
+rollout:
+  enabled: false
+routing:
+  enabled: false
+routePath: /
+probes:
+  path: /
+  failureThreshold: 30
+  periodSeconds: 10
+  timeoutSeconds: 5
+  failureThreshold: 6
+service:
+  type: ClusterIP
+  port: 80
+autoscaling:
+  enabled: false
+env:
+  PORT: "80"
+  VITE_USERS_API: "/api/users"
+  VITE_STOCKS_API: "/api/stocks"
+  VITE_TRADES_API: "/api/trades"
+  VITE_PORTFOLIO_API: "/api/portfolio"

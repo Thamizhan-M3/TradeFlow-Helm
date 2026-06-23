@@ -1,0 +1,24 @@
+dependencies:
+- name: common
+  repository: file://./charts/common
+  version: 1.0.0
+- name: frontend
+  repository: file://./charts/frontend
+  version: 1.0.0
+- name: user
+  repository: file://./charts/user
+  version: 1.0.0
+- name: stock
+  repository: file://./charts/stock
+  version: 1.0.0
+- name: trading
+  repository: file://./charts/trading
+  version: 1.0.0
+- name: portfolio
+  repository: file://./charts/portfolio
+  version: 1.0.0
+- name: mongodb
+  repository: https://charts.bitnami.com/bitnami
+  version: 14.0.0
+digest: sha256:c5c7cad2bc114bbf8ef083b72e7867c6b2fc90e8ea429c1bae1ee5477fe5d965
+generated: "2026-06-23T02:41:19.6417668+05:30"

@@ -1,0 +1,113 @@
+global:
+  environment: default
+  ingress:
+    domain: tradeflow.local
+  gateway:
+    enabled: true
+    className: kgateway
+    name: tradeflow-gateway
+  service:
+    type: ClusterIP
+
+# -------------------------
+# MICROSERVICES DEFAULTS
+# -------------------------
+frontend:
+  enabled: true
+  routePath: /
+  probes:
+    path: /
+    failureThreshold: 30
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 6
+  service:
+    type: ClusterIP
+    port: 80
+  env:
+    PORT: "80"
+    VITE_USERS_API: "/api/users"
+    VITE_STOCKS_API: "/api/stocks"
+    VITE_TRADES_API: "/api/trades"
+    VITE_PORTFOLIO_API: "/api/portfolio"
+
+user:
+  enabled: true
+  routePath: /api/users
+  probes:
+    path: /health
+    initialDelaySeconds: 60
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 6
+  service:
+    type: ClusterIP
+    port: 4001
+  env:
+    PORT: "4001"
+
+stock:
+  enabled: true
+  routePath: /api/stocks
+  probes:
+    path: /health
+    initialDelaySeconds: 60
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 6
+  service:
+    type: ClusterIP
+    port: 4002
+  env:
+    PORT: "4002"
+
+trading:
+  enabled: true
+  routePath: /api/trades
+  probes:
+    path: /health
+    initialDelaySeconds: 60
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 6
+  service:
+    type: ClusterIP
+    port: 4003
+  env:
+    PORT: "4003"
+
+portfolio:
+  enabled: true
+  routePath: /api/portfolio
+  probes:
+    path: /health
+    initialDelaySeconds: 60
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 6
+  service:
+    type: ClusterIP
+    port: 4004
+  env:
+    PORT: "4004"
+
+mongodb:
+  enabled: true
+  gateway:
+    enabled: false
+
+gateway:
+  enabled: true
+
+haproxy:
+  enabled: true
+
+# ──────────────────────────────────────────────────────────────
+# COMMON CHART VALUES
+# Gateway is deployed via the common sub-chart.
+# Values here are scoped under 'common' and passed to it.
+# ──────────────────────────────────────────────────────────────
+common:
+  gateway:
+    enabled: true
+    className: kgateway

@@ -1,0 +1,225 @@
+global:
+  environment: eks-demo
+  ingress:
+    enabled: false
+    domain: tradeflow.local
+  gateway:
+    enabled: false
+    className: ""
+    name: ""
+  service:
+    type: ClusterIP
+
+gateway:
+  enabled: false
+
+common:
+  gateway:
+    enabled: false
+    className: ""
+
+haproxy:
+  enabled: false
+
+frontend:
+  enabled: true
+  replicaCount: 1
+  rollout:
+    enabled: false
+  routing:
+    enabled: false
+  image:
+    repository: thamizhanm3/tradeflow-frontend
+    tag: "v0.0.3"
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 80
+  routePath: /
+  env:
+    PORT: "80"
+    VITE_USERS_API: "/api/users"
+    VITE_STOCKS_API: "/api/stocks"
+    VITE_TRADES_API: "/api/trades"
+    VITE_PORTFOLIO_API: "/api/portfolio"
+  probes:
+    path: /
+    initialDelaySeconds: 10
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 6
+  resources:
+    requests:
+      cpu: "50m"
+      memory: "64Mi"
+    limits:
+      cpu: "200m"
+      memory: "256Mi"
+  autoscaling:
+    enabled: false
+
+user:
+  enabled: true
+  replicaCount: 1
+  rollout:
+    enabled: false
+  routing:
+    enabled: false
+  image:
+    repository: thamizhanm3/tradeflow-user
+    tag: "v0.0.1"
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 4001
+  routePath: "/api/users"
+  env:
+    PORT: "4001"
+    MONGODB_URI: "mongodb://tradeflow-eks-mongodb:27017/user_db_demo"
+  probes:
+    path: /health
+    initialDelaySeconds: 60
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 6
+  resources:
+    requests:
+      cpu: "50m"
+      memory: "64Mi"
+    limits:
+      cpu: "200m"
+      memory: "256Mi"
+  autoscaling:
+    enabled: false
+
+stock:
+  enabled: true
+  replicaCount: 1
+  rollout:
+    enabled: false
+  routing:
+    enabled: false
+  image:
+    repository: thamizhanm3/tradeflow-stock
+    tag: "v0.0.1"
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 4002
+  routePath: "/api/stocks"
+  env:
+    PORT: "4002"
+    MONGODB_URI: "mongodb://tradeflow-eks-mongodb:27017/stock_db_demo"
+  probes:
+    path: /health
+    initialDelaySeconds: 60
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 6
+  resources:
+    requests:
+      cpu: "50m"
+      memory: "64Mi"
+    limits:
+      cpu: "200m"
+      memory: "256Mi"
+  autoscaling:
+    enabled: false
+
+trading:
+  enabled: true
+  replicaCount: 1
+  rollout:
+    enabled: false
+  routing:
+    enabled: false
+  image:
+    repository: thamizhanm3/tradeflow-trading
+    tag: "v0.0.1"
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 4003
+  routePath: "/api/trades"
+  env:
+    PORT: "4003"
+    MONGODB_URI: "mongodb://tradeflow-eks-mongodb:27017/trading_db_demo"
+  probes:
+    path: /health
+    initialDelaySeconds: 60
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 6
+  resources:
+    requests:
+      cpu: "50m"
+      memory: "64Mi"
+    limits:
+      cpu: "200m"
+      memory: "256Mi"
+  autoscaling:
+    enabled: false
+
+portfolio:
+  enabled: true
+  replicaCount: 1
+  rollout:
+    enabled: false
+  routing:
+    enabled: false
+  image:
+    repository: thamizhanm3/tradeflow-portfolio
+    tag: "v0.0.1"
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 4004
+  routePath: "/api/portfolio"
+  env:
+    PORT: "4004"
+    MONGODB_URI: "mongodb://tradeflow-eks-mongodb:27017/portfolio_db_demo"
+  probes:
+    path: /health
+    initialDelaySeconds: 60
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 6
+  resources:
+    requests:
+      cpu: "50m"
+      memory: "64Mi"
+    limits:
+      cpu: "200m"
+      memory: "256Mi"
+  autoscaling:
+    enabled: false
+
+mongodb:
+  enabled: true
+  architecture: standalone
+  replicaCount: 1
+  replicaSetName: ""
+  auth:
+    enabled: false
+  image:
+    registry: docker.io
+    repository: bitnami/mongodb
+    tag: "7.0.14-debian-12-r0"
+    pullPolicy: IfNotPresent
+  persistence:
+    enabled: true
+    storageClass: ""
+    size: 2Gi
+  service:
+    type: ClusterIP
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "256Mi"
+    limits:
+      cpu: "500m"
+      memory: "1Gi"
+  arbiter:
+    enabled: false
+  gateway:
+    enabled: false

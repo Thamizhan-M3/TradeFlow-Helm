@@ -1,0 +1,27 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: tradeflow-eks-demo
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/Thamizhan-M3/TradeFlow-Helm.git
+    targetRevision: master
+    path: helm/tradeflow
+    helm:
+      releaseName: tradeflow-eks
+      valueFiles:
+        - values.yaml
+        - ../../tradeflow-eks/values-eks-demo.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: tradeflow
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - PrunePropagationPolicy=foreground
+      - PruneLast=true

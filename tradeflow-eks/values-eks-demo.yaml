@@ -33,7 +33,7 @@ frontend:
     tag: "v0.0.3"
     pullPolicy: IfNotPresent
   service:
-    type: ClusterIP
+    type: LoadBalancer
     port: 80
   routePath: /
   env:

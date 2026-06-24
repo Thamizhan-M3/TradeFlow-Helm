@@ -1,0 +1,67 @@
+{{- if and .Values.frontend.pdb.enabled (gt (int .Values.frontend.replicaCount) 1) }}
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ .Release.Name }}-frontend
+  labels:
+    app.kubernetes.io/name: frontend
+    app.kubernetes.io/instance: {{ .Release.Name }}
+spec:
+  minAvailable: {{ .Values.frontend.pdb.minAvailable }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: frontend
+      app.kubernetes.io/instance: {{ .Release.Name }}
+{{- end }}
+{{- if and .Values.nginxGateway.enabled .Values.nginxGateway.pdb.enabled (gt (int .Values.nginxGateway.replicaCount) 1) }}
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ .Release.Name }}-gateway
+  labels:
+    app.kubernetes.io/name: nginx-gateway
+    app.kubernetes.io/instance: {{ .Release.Name }}
+spec:
+  minAvailable: {{ .Values.nginxGateway.pdb.minAvailable }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: nginx-gateway
+      app.kubernetes.io/instance: {{ .Release.Name }}
+{{- end }}
+{{- $services := list "user" "stock" "trading" "portfolio" }}
+{{- range $service := $services }}
+{{- $values := index $.Values $service }}
+{{- if and $values.pdb.enabled (gt (int $values.replicaCount) 1) }}
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ $.Release.Name }}-{{ $service }}
+  labels:
+    app.kubernetes.io/name: {{ $service }}
+    app.kubernetes.io/instance: {{ $.Release.Name }}
+spec:
+  minAvailable: {{ $values.pdb.minAvailable }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ $service }}
+      app.kubernetes.io/instance: {{ $.Release.Name }}
+{{- end }}
+{{- end }}
+{{- if and .Values.mongodb.pdb.enabled (gt (int .Values.mongodb.replicaCount) 1) }}
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ .Release.Name }}-mongodb
+  labels:
+    app.kubernetes.io/name: mongodb
+    app.kubernetes.io/instance: {{ .Release.Name }}
+spec:
+  minAvailable: {{ .Values.mongodb.pdb.minAvailable }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: mongodb
+      app.kubernetes.io/instance: {{ .Release.Name }}
+{{- end }}

@@ -23,6 +23,7 @@ haproxy:
 
 nginxGateway:
   enabled: true
+  replicaCount: 1
   image:
     repository: nginx
     tag: stable-alpine
@@ -30,6 +31,9 @@ nginxGateway:
   service:
     type: LoadBalancer
     port: 80
+  pdb:
+    enabled: false
+    minAvailable: 1
 
 frontend:
   enabled: true
@@ -67,6 +71,9 @@ frontend:
       memory: "256Mi"
   autoscaling:
     enabled: false
+  pdb:
+    enabled: false
+    minAvailable: 1
 
 user:
   enabled: true
@@ -101,6 +108,9 @@ user:
       memory: "256Mi"
   autoscaling:
     enabled: false
+  pdb:
+    enabled: false
+    minAvailable: 1
 
 stock:
   enabled: true
@@ -135,6 +145,9 @@ stock:
       memory: "256Mi"
   autoscaling:
     enabled: false
+  pdb:
+    enabled: false
+    minAvailable: 1
 
 trading:
   enabled: true
@@ -169,6 +182,9 @@ trading:
       memory: "256Mi"
   autoscaling:
     enabled: false
+  pdb:
+    enabled: false
+    minAvailable: 1
 
 portfolio:
   enabled: true
@@ -203,6 +219,9 @@ portfolio:
       memory: "256Mi"
   autoscaling:
     enabled: false
+  pdb:
+    enabled: false
+    minAvailable: 1
 
 mongodb:
   enabled: true
@@ -233,3 +252,17 @@ mongodb:
     enabled: false
   gateway:
     enabled: false
+  pdb:
+    enabled: false
+    minAvailable: 1
+
+networkPolicy:
+  enabled: true
+  dns:
+    namespaceSelector: {}
+    podSelector:
+      matchLabels:
+        k8s-app: kube-dns
+    port: 53
+  mongodb:
+    port: 27017
